@@ -41,7 +41,7 @@ class net_2(nn.Module):
     def __init__(self, act_func):
         super().__init__()
         self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 1, out_channels = 10, kernel_size = 4, padding = 2, stride = 1), act_func, nn.MaxPool2d(2))
-        self.layer2 = nn.Sequential(nn.Conv2d(in_channels = 64, out_channels = 64, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
+        self.layer2 = nn.Sequential(nn.Conv2d(in_channels = 10, out_channels = 64, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
         self.layer3 = nn.Sequential(nn.Conv2d(in_channels = 64, out_channels = 96, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
         self.layer4 = nn.Sequential(nn.Conv2d(in_channels = 96, out_channels = 256, kernel_size = 4, padding = 2, stride = 1), act_func,nn.MaxPool2d(2))
         self.fc1 = nn.Linear(in_features = 256*1*1, out_features = 150)
