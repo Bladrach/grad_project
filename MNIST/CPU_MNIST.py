@@ -32,7 +32,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle
 
 classes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 # All parameters can change to intended values
-class net(nn.Module):
+class seq_net(nn.Module):
     def __init__(self, act_func):
         super().__init__()
         self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 1, out_channels = 10, kernel_size = 4, padding = 2, stride = 1), act_func, nn.MaxPool2d(2))
@@ -51,7 +51,7 @@ class net(nn.Module):
         x = self.fc3(x)
         return x
 
-class net_2(nn.Module):
+class seq_net_2(nn.Module):
     def __init__(self, act_func):
         super().__init__()
         self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 1, out_channels = 10, kernel_size = 4, padding = 2, stride = 1), act_func, nn.MaxPool2d(2))
@@ -76,16 +76,16 @@ class net_2(nn.Module):
 
 # act_func can be changed to intended activation function
 # NN that using ReLU
-net_ReLU = net(act_func = nn.ReLU())  
+net_ReLU = seq_net(act_func = nn.ReLU())  
 # Same NN but now using Sigmoid
-net_Sigmoid = net(act_func = nn.Sigmoid())
+net_Sigmoid = seq_net(act_func = nn.Sigmoid())
 # Different NN with extra 2 layers (1 conv + 1 fc) using ReLU
-net_ReLU_2 = net_2(act_func = nn.ReLU())
+net_ReLU_2 = seq_net_2(act_func = nn.ReLU())
 # Different NN with extra 2 layers (1 conv + 1 fc) but now using Sigmoid
-net_Sigmoid_2 = net_2(act_func = nn.Sigmoid())
+net_Sigmoid_2 = seq_net_2(act_func = nn.Sigmoid())
 # List of NNs created
-nets = [net_ReLU, net_Sigmoid, net_ReLU_2, net_Sigmoid_2]
-length = len(nets)
+networks = [net_ReLU, net_Sigmoid, net_ReLU_2, net_Sigmoid_2]
+length = len(networks)
 
 criterion = nn.CrossEntropyLoss()
 
@@ -98,7 +98,7 @@ iterator = 0
 for net in range(length):
  start = timer() # To see the training time for each NN
  iterator+=1
- optimizer = optim.SGD(nets[net].parameters(), lr=0.001, momentum=0.9)
+ optimizer = optim.SGD(networks[net].parameters(), lr=0.001, momentum=0.9)
  print('##### NET', iterator, '#####')
  for epoch in range(epochs):  # loop over the dataset multiple times
     print('Epoch number:', epoch + 1)
@@ -109,7 +109,7 @@ for net in range(length):
         # zero the parameter gradients
         optimizer.zero_grad()
         # forward + backward + optimize
-        outputs = nets[net](inputs)
+        outputs = networks[net](inputs)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -130,7 +130,7 @@ for net in range(length):
  with torch.no_grad():
     for data in testloader:
         images, labels = data
-        outputs = nets[net](images)
+        outputs = networks[net](images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
@@ -139,16 +139,16 @@ for net in range(length):
  accuracy_list.append(format((100 * correct / total), '.3f'))
 
 # Save trained model on a file so one can load and use it
-torch.save(nets, 'CPU_MNIST_4NETS.pt')
+torch.save(networks, 'CPU_MNIST_4Networks.pt')
 
 figure(1)
-list_number_of_nets = [1, 2, 3, 4]
+list_number_of_networks = [1, 2, 3, 4]
   
 # Labels for bars 
 tick_label = ['NET 1 \n ReLU with 3 conv, 3 fc', 'NET 2 \n Sigmoid with same 3 conv, 3 fc', 'NET 3 \n ReLU with 4 conv, 4 fc', 
               'NET 4 \n Sigmoid with same 4 conv, 4 fc'] 
 # Plot total accuracies as bar charts
-plt.bar(list_number_of_nets, accuracy_list, tick_label = tick_label, 
+plt.bar(list_number_of_networks, accuracy_list, tick_label = tick_label, 
         width = 0.20, color = ['red', 'green', 'blue', 'yellow']) 
 
 # Naming the y-axis 
@@ -165,7 +165,7 @@ plt.show()
 # Write results to an excel file
 workbook = xlsxwriter.Workbook('Benchmark_results.xlsx')
 worksheet = workbook.add_worksheet("Results Sheet") 
-worksheet.write(0, 0, "[NETS, Results]")
+worksheet.write(0, 0, "[Networks, Results]")
 worksheet.write(1, 0, "NET 1")
 worksheet.write(2, 0, "NET 2")
 worksheet.write(3, 0, "NET 3")
