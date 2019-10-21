@@ -9,7 +9,7 @@
 # "pip install xlsxwriter" or "conda install -c anaconda xlsxwriter"#
 # to install it.                                                    #
 #                                                                   #
-# Author:     Mehmet KAPSON     20.10.2019                          #
+# Author:     Mehmet KAPSON     21.10.2019                          #
 #-------------------------------------------------------------------#
 import torch
 import torchvision
@@ -35,6 +35,21 @@ classes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 class seq_net(nn.Module):
     def __init__(self, act_func):
         super().__init__()
+        self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 1, out_channels = 20, kernel_size = 4, padding = 1, stride = 1), act_func, nn.MaxPool2d(2))
+        self.layer2 = nn.Sequential(nn.Conv2d(in_channels = 20, out_channels = 40, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
+        self.fc1 = nn.Linear(in_features = 40*6*6, out_features = 120)
+        self.fc2 = nn.Linear(in_features = 120, out_features = 10)
+    def forward(self, x):
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = x.reshape(x.size(0), -1)
+        x = self.fc1(x)
+        x = self.fc2(x)
+        return x
+
+class seq_net_2(nn.Module):
+    def __init__(self, act_func):
+        super().__init__()
         self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 1, out_channels = 10, kernel_size = 4, padding = 2, stride = 1), act_func, nn.MaxPool2d(2))
         self.layer2 = nn.Sequential(nn.Conv2d(in_channels = 10, out_channels = 20, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
         self.layer3 = nn.Sequential(nn.Conv2d(in_channels = 20, out_channels = 40, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
@@ -49,29 +64,6 @@ class seq_net(nn.Module):
         x = self.fc1(x)
         x = self.fc2(x)
         x = self.fc3(x)
-        return x
-
-class seq_net_2(nn.Module):
-    def __init__(self, act_func):
-        super().__init__()
-        self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 1, out_channels = 10, kernel_size = 4, padding = 2, stride = 1), act_func, nn.MaxPool2d(2))
-        self.layer2 = nn.Sequential(nn.Conv2d(in_channels = 10, out_channels = 20, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
-        self.layer3 = nn.Sequential(nn.Conv2d(in_channels = 20, out_channels = 40, kernel_size = 4, padding = 1, stride = 1), act_func,nn.MaxPool2d(2))
-        self.layer4 = nn.Sequential(nn.Conv2d(in_channels = 40, out_channels = 160, kernel_size = 4, padding = 2, stride = 1), act_func,nn.MaxPool2d(2))
-        self.fc1 = nn.Linear(in_features = 160*1*1, out_features = 120)
-        self.fc2 = nn.Linear(in_features = 120, out_features = 90)
-        self.fc3 = nn.Linear(in_features = 90, out_features = 60)
-        self.fc4 = nn.Linear(in_features = 60, out_features = 10)
-    def forward(self, x):
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        x = x.reshape(x.size(0), -1)
-        x = self.fc1(x)
-        x = self.fc2(x)
-        x = self.fc3(x)
-        x = self.fc4(x)
         return x
 
 # act_func can be changed to intended activation function
@@ -145,8 +137,8 @@ figure(1)
 list_number_of_networks = [1, 2, 3, 4]
   
 # Labels for bars 
-tick_label = ['NET 1 \n ReLU with 3 conv, 3 fc', 'NET 2 \n Sigmoid with same 3 conv, 3 fc', 'NET 3 \n ReLU with 4 conv, 4 fc', 
-              'NET 4 \n Sigmoid with same 4 conv, 4 fc'] 
+tick_label = ['NET 1 \n ReLU with 2 conv, 2 fc', 'NET 2 \n Sigmoid with same 2 conv, 2 fc', 'NET 3 \n ReLU with 3 conv, 3 fc', 
+              'NET 4 \n Sigmoid with same 3 conv, 3 fc'] 
 # Plot total accuracies as bar charts
 plt.bar(list_number_of_networks, accuracy_list, tick_label = tick_label, 
         width = 0.20, color = ['red', 'green', 'blue', 'yellow']) 
