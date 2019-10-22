@@ -9,7 +9,7 @@
 # "pip install xlsxwriter" or "conda install -c anaconda xlsxwriter"#
 # to install it.                                                    #
 #                                                                   #
-# Author:     Mehmet KAPSON     21.10.2019                          #
+# Author:     Mehmet KAPSON     20.10.2019                          #
 #-------------------------------------------------------------------#
 import torch
 import torchvision
