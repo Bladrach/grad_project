@@ -86,12 +86,10 @@ time_taken_list = []
 
 epochs = 20 # Change if you want
 # Training
-iterator = 0
 for net in range(length):
  start = timer() # To see the training time for each NN
- iterator+=1
  optimizer = optim.SGD(networks[net].parameters(), lr=0.001, momentum=0.9)
- print('##### NET', iterator, '#####')
+ print('##### NET', net+1, '#####')
  for epoch in range(epochs):  # loop over the dataset multiple times
     print('Epoch number:', epoch + 1)
     running_loss = 0.0
@@ -111,11 +109,11 @@ for net in range(length):
             print('[%d, %5d] loss: %.3f' %
                   (epoch + 1, i + 1, running_loss / 2000))
             running_loss = 0.0
- print('Finished training for NET', iterator)
  end = timer()
+ print('Finished training for NET', net+1)
  time_taken = format((end - start)/60, '.3f')
  time_taken_list.append(time_taken) 
- print('Time taken for NET', iterator, ':', time_taken, 'minutes')
+ print('Time taken for NET', net+1, ':', time_taken, 'minutes')
 
  correct = 0
  total = 0
@@ -127,20 +125,22 @@ for net in range(length):
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
- print('Accuracy of the NET', iterator, 'on the 10.000 test images: %d %%' % (100 * correct / total))
+ print('Accuracy of the NET', net+1, 'on the 10.000 test images: %d %%' % (100 * correct / total))
  accuracy_list.append(100 * correct / total)
 
 # Save trained model on a file so one can load and use it
 torch.save(networks, 'CPU_MNIST_4Networks.pt')
 
 figure(1)
-list_number_of_networks = [1, 2, 3, 4]
+pos = np.arange(length)
   
 # Labels for bars 
-tick_label = ['NET 1 \n ReLU with 2 conv, 2 fc', 'NET 2 \n Sigmoid with same 2 conv, 2 fc', 'NET 3 \n ReLU with 3 conv, 3 fc', 
-              'NET 4 \n Sigmoid with same 3 conv, 3 fc'] 
+tick_label = ['NET 1 \n ReLU with 2 conv, 2 fc \n Mins: ' + str(time_taken_list[0]), 
+              'NET 2 \n Sigmoid with same 2 conv, 2 fc \n Mins: ' + str(time_taken_list[1]),
+              'NET 3 \n ReLU with 3 conv, 3 fc \n Mins: ' + str(time_taken_list[2]),
+              'NET 4 \n Sigmoid with same 3 conv, 3 fc \n Mins: ' + str(time_taken_list[3])] 
 # Plot total accuracies as bar charts
-plt.bar(list_number_of_networks, accuracy_list, tick_label = tick_label, 
+plt.bar(pos, accuracy_list, tick_label = tick_label, 
         width = 0.20, color = ['red', 'green', 'blue', 'yellow']) 
 
 # Naming the y-axis 
@@ -156,14 +156,14 @@ plt.show()
 
 # Write results to an excel file
 workbook = xlsxwriter.Workbook('Benchmark_results.xlsx')
-worksheet = workbook.add_worksheet("Results Sheet") 
-worksheet.write(0, 0, "[Networks, Results]")
-worksheet.write(1, 0, "NET 1")
-worksheet.write(2, 0, "NET 2")
-worksheet.write(3, 0, "NET 3")
-worksheet.write(4, 0, "NET 4")
-worksheet.write(0, 1, "Accuracy (%)")
-worksheet.write(0, 2, "Time Taken (mins)")
+worksheet = workbook.add_worksheet('Results Sheet') 
+worksheet.write(0, 0, '[Networks, Results]')
+worksheet.write(0, 1, 'Accuracy (%)')
+worksheet.write(0, 2, 'Time Taken (mins)') 
+row = 0
+for net in range(length):
+ row+=1
+ worksheet.write(row, 0, 'NET ' + str(net+1))
 # Write the data to a sequence of cells.
 worksheet.write_column(1, 1, accuracy_list)
 worksheet.write_column(1, 2, time_taken_list)
