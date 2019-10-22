@@ -125,7 +125,7 @@ for net in range(length):
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
- print('Accuracy of the NET', net+1, 'on the 10.000 test images: %d %%' % (100 * correct / total))
+ print('Accuracy of NET', net+1, 'on the 10.000 test images: %d %%' % (100 * correct / total))
  accuracy_list.append(100 * correct / total)
 
 # Save trained model on a file so one can load and use it
