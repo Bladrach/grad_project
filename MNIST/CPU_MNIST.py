@@ -128,7 +128,7 @@ for net in range(length):
         correct += (predicted == labels).sum().item()
 
  print('Accuracy of the NET', iterator, 'on the 10.000 test images: %d %%' % (100 * correct / total))
- accuracy_list.append(format((100 * correct / total), '.3f'))
+ accuracy_list.append(100 * correct / total)
 
 # Save trained model on a file so one can load and use it
 torch.save(networks, 'CPU_MNIST_4Networks.pt')
