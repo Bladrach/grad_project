@@ -135,10 +135,10 @@ figure(1)
 pos = np.arange(length)
   
 # Labels for bars 
-tick_label = ['NET 1 \n ReLU with 2 conv, 2 fc \n Mins: ' + str(time_taken_list[0]), 
-              'NET 2 \n Sigmoid with same 2 conv, 2 fc \n Mins: ' + str(time_taken_list[1]),
-              'NET 3 \n ReLU with 3 conv, 3 fc \n Mins: ' + str(time_taken_list[2]),
-              'NET 4 \n Sigmoid with same 3 conv, 3 fc \n Mins: ' + str(time_taken_list[3])] 
+tick_label = ['NET 1 \n ReLU with 2 conv, 2 fc \n Mins: {0} \n Accuracy: {1}'.format(time_taken_list[0],accuracy_list[0]), 
+              'NET 2 \n Sigmoid with same 2 conv, 2 fc \n Mins: {0} \n Accuracy: {1}'.format(time_taken_list[1],accuracy_list[1]), 
+              'NET 3 \n ReLU with 3 conv, 3 fc \n Mins: {0} \n Accuracy: {1}'.format(time_taken_list[2],accuracy_list[2]), 
+              'NET 4 \n Sigmoid with same 3 conv, 3 fc \n Mins: {0} \n Accuracy: {1}'.format(time_taken_list[3],accuracy_list[3])]
 # Plot total accuracies as bar charts
 plt.bar(pos, accuracy_list, tick_label = tick_label, 
         width = 0.20, color = ['red', 'green', 'blue', 'yellow']) 
@@ -150,12 +150,12 @@ plt.title('Accuracy Comparison (CPU)', fontsize = 18)
 
 plt.figure(1).set_size_inches(25,15)
 # Function to save the plot 
-plt.savefig('CPU_MNIST_RESULTS_for_20_epochs.png', bbox_inches='tight')
+plt.savefig('CPU_MNIST_GRAPH.png', bbox_inches='tight')
 # Function to show the plot 
 plt.show() 
 
 # Write results to an excel file
-workbook = xlsxwriter.Workbook('Benchmark_results.xlsx')
+workbook = xlsxwriter.Workbook('Performance_results.xlsx')
 worksheet = workbook.add_worksheet('Results Sheet') 
 worksheet.write(0, 0, '[Networks, Results]')
 worksheet.write(0, 1, 'Accuracy (%)')
