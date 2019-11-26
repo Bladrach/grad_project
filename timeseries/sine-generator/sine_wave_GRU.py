@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------#
-# Sine generator with and without noise (GRU 3 layers)              #
+# Sine generator with and without noise (GRU)                       #
 # Author:     Mehmet KAPSON     25.11.2019                          #
 #-------------------------------------------------------------------#
 import torch
@@ -17,8 +17,7 @@ y_noisy = torch.sin(x) + 0.45 * torch.rand(x.size())  # noisy y data
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')  # use gpu if it is available
                                                                          # GPU implementation is used to speed up the process
-h0 = torch.zeros(3, 1, 1)  # create hidden state tensor with zeros       # it takes more time than FCN on CPU
-
+                                                                         # it takes more time than FCN on CPU
 # GRU nn model
 class GRU(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, num_layers):  # needed parameters to initialize
@@ -28,19 +27,26 @@ class GRU(nn.Module):
         self.fc = nn.Linear(hidden_size, output_size)  # a linear layer
     
     def forward(self, input, hidden):
-        output = self.fc(input)  # pass input to linear layer
-        output, hidden = self.gru(output, hidden)  # use hidden state and output of linear layer to get output and new hidden state
+        output, hidden = self.gru(input, hidden)  # use hidden state and input to get output and new hidden state
+        output = self.fc(output)  # pass output to linear layer
         return output, hidden
+# define some parameters -- hidden_size and num_layers can be changed
+input_size = 1
+hidden_size = 5
+output_size = 1
+num_layers = 4
+
+net = GRU(input_size = input_size, hidden_size = hidden_size, output_size = output_size, num_layers = num_layers).to(device)  # send GRU model to GPU
+
+print('Network = ', net.parameters)  # print information about GRU (our model)
+
+h0 = torch.zeros(num_layers, input_size, hidden_size)  # create first hidden state tensor with zeros
 
 # send datas to GPU on next 4 lines
 h0 = h0.to(device)
 x = x.to(device)
 y = y.to(device)
 y_noisy = y_noisy.to(device)
-
-net = GRU(input_size = 1, hidden_size = 1, output_size = 1, num_layers = 3).to(device)  # send GRU model to GPU
-
-print('Network = ', net.parameters)  # print information about GRU (our model)
 
 criterion = nn.MSELoss()  # loss function for regression mean squared loss
 optimizer = optim.SGD(net.parameters(), lr = 0.005, momentum = 0.9)  # SGD optimizer, tried to optimize 
@@ -73,7 +79,7 @@ for target in range(target_number):
         optimizer.step()  # apply gradients
         running_loss += loss.item()  # calculate loss for corresponded epoch
         if i % 40 == 39:    # print every 40 epochs and its loss
-            print('[epoch: %d] ----- [loss: %.3f]' % (i + 1, running_loss))  # print epoch and its loss
+            print('[epoch: %d] ----- [loss: %.5f]' % (i + 1, running_loss))  # print epoch and its loss
             running_loss = 0.0  # zero the loss
     end = timer()  # end timer
     elapsed_time = format((end - start)/60, '.3f')  # calculate elapsed time for training session
