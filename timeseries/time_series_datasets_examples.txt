@@ -1,0 +1,15 @@
+Thanks to this website, you can find some time-series datasets and info about them.
+
+https://machinelearningmastery.com/time-series-datasets-for-machine-learning/
+
+1) Shampoo Sales Dataset:
+   This dataset describes the monthly number of sales of shampoo over a 3 year period.
+2) Minimum Daily Temperatures Dataset:
+   This dataset describes the minimum daily temperatures over 10 years (1981-1990) 
+   in the city Melbourne, Australia.
+3) Monthly Sunspot Dataset:
+   This dataset describes a monthly count of the number 
+   of observed sunspots for just over 230 years (1749-1983).
+4) Daily Female Births Dataset:
+   This dataset describes the number of daily female births in California in 1959.
+
