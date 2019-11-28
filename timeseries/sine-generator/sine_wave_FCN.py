@@ -18,9 +18,9 @@ y_noisy = torch.sin(x) + 0.25 * torch.rand(x.size())  # noisy y data
 class FCN_3L(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(in_features = 1, out_features = 2)
-        self.fc2 = nn.Linear(in_features = 2, out_features = 2)
-        self.fc3 = nn.Linear(in_features = 2, out_features = 1)
+        self.fc1 = nn.Linear(in_features = 1, out_features = 10)
+        self.fc2 = nn.Linear(in_features = 10, out_features = 10)
+        self.fc3 = nn.Linear(in_features = 10, out_features = 1)
 
     def forward(self, x):
         x = x.reshape(x.size(0), -1)
