@@ -34,9 +34,9 @@ class GRU(nn.Module):
         return output, hidden
 # define some parameters -- hidden_size and num_layers can be changed
 input_size = 1
-hidden_size = 5
+hidden_size = 10
 output_size = 1
-num_layers = 4
+num_layers = 3
 
 net = GRU(input_size = input_size, hidden_size = hidden_size, output_size = output_size, num_layers = num_layers).to(device)  # send GRU model to GPU
 
