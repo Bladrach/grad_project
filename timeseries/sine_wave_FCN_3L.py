@@ -13,11 +13,10 @@ signal_duration = 2
 total_samples = sampling_freq * signal_duration
 
 # learning variables
-max_epoch = 100 + 1
+max_epoch = 150 + 1
 test_number = 25
 learning_rate = 1e-3
-batch_size = 64
-
+batch_size = 16
 
 x = torch.linspace(0, signal_duration * 2 * np.pi, total_samples)  # dividing signal_duration * 2 * np.pi interval into (total_samples) pieces with same length, x data
 y_gt = torch.sin(x)  # create sine wave for x points, y data
@@ -45,7 +44,7 @@ model = FCN_3L()  # fully connected neural network
 print(model)  # print information about FCN_3L (our model)
 
 loss_function = nn.MSELoss()  # loss function for regression mean squared loss
-optimizer = optim.Adam(model.parameters(), learning_rate)  # SGD optimizer
+optimizer = optim.Adam(model.parameters(), learning_rate)  # Adam optimizer
 
 for epoch in range(max_epoch):
 
@@ -55,10 +54,10 @@ for epoch in range(max_epoch):
         input_batch = torch.zeros(batch_size, 1)  # create tensor of zeros with batch_size as its size to use as input
         ground_truth_batch = torch.zeros(batch_size, 1)  # create tensor of zeros with batch_size as its size to use as ground truth
 
-        for batch_index in range(batch_size):
-            rand_index = random.randint(0, total_samples - 1)  # create random int between 0 and total_samples-1
+        for batch_index in range(batch_size):  # loop for getting random pieces 
+            rand_index = random.randint(0, total_samples - 1)  # generate random int between 0 and total_samples-1
             input_batch[batch_index, 0] = x[rand_index]  # assign random element of x to input_batch tensor's element
-                                                         # use random sort order to avoid SGD be stuck on local minimum
+                                                         # use random sort order to avoid optimizer be stuck on local minimum
             ground_truth_batch[batch_index, 0] = y_gt[rand_index]  # assign the same random element of y_gt to ground truth tensor's element
 
         out = model(input_batch)  # prediction of model for input_batch
@@ -69,7 +68,7 @@ for epoch in range(max_epoch):
 
         loss.backward()  # compute gradients, backpropagation
 
-        optimizer.step()  # apply gradients
+        optimizer.step()  # apply gradients to update weights
         # print epoch, iteration and its loss
         print("Epoch: ", str(epoch), " Iteration: ", str(epoch_index), " Loss: ", str(loss.data))
 
